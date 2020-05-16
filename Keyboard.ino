@@ -23,6 +23,8 @@ int h2State = HIGH;
 int a0State = LOW;
 int fState = LOW;
 
+int wasSomethingActive = 0;
+
 struct KeysStatuses {
   int a1 = INACTIVE;
   int a2 = INACTIVE;
@@ -46,7 +48,6 @@ void setup() {
 
   pinMode(A0_OUTPUT, OUTPUT);
   pinMode(F_OUTPUT, OUTPUT);
-//  Keyboard.begin();
 }
 
 bool isAnyActive() {
@@ -107,6 +108,14 @@ void loop() {
     }
   } else if (!isAnyActive()) {
     keysStatuses.f = INACTIVE;
+  }
+
+  if (isAnyActive()) {
+    wasSomethingActive = 1;
+  } else if (wasSomethingActive) {
+    // Cleaning the keypress I guess
+    BLE.press_key(HID_KEYBOARD_RESERVED);
+    wasSomethingActive = 0;
   }
   
   if (a1State == LOW && keysStatuses.a1 == INACTIVE) {
@@ -292,39 +301,38 @@ void loop() {
 #define HID_CONSUMER_VOLUME_UP      233 // 0xE9 - Volume Increment
 #define HID_CONSUMER_VOLUME_DOWN    234 // 0xEA - Volume Decrement
  */
-// To clean
- //  BLE.press_key(HID_KEYBOARD_RESERVED);delay(10);
- // To write
- //  BLE.press_key(hid_key[0]);
  
   if (keysStatuses.a0 == ACTIVE) {
-    if (keysStatuses.a1 == ACTIVE && keysStatuses.a2 == INACTIVE && keysStatuses.a3 == INACTIVE && keysStatuses.a4 == INACTIVE) { Serial.print('e'); }
-    if (keysStatuses.a1 == INACTIVE && keysStatuses.a2 == ACTIVE && keysStatuses.a3 == INACTIVE && keysStatuses.a4 == INACTIVE) { Serial.print('t'); }
-    if (keysStatuses.a1 == INACTIVE && keysStatuses.a2 == INACTIVE && keysStatuses.a3 == ACTIVE && keysStatuses.a4 == INACTIVE) { Serial.print('a'); }
-    if (keysStatuses.a1 == INACTIVE && keysStatuses.a2 == INACTIVE && keysStatuses.a3 == INACTIVE && keysStatuses.a4 == ACTIVE) { Serial.print('o'); }
-    if (keysStatuses.a1 == ACTIVE && keysStatuses.a2 == ACTIVE && keysStatuses.a3 == INACTIVE && keysStatuses.a4 == INACTIVE) { Serial.print('i'); }
-    if (keysStatuses.a1 == INACTIVE && keysStatuses.a2 == ACTIVE && keysStatuses.a3 == ACTIVE && keysStatuses.a4 == INACTIVE) { Serial.print('n'); }
-    if (keysStatuses.a1 == INACTIVE && keysStatuses.a2 == INACTIVE && keysStatuses.a3 == ACTIVE && keysStatuses.a4 == ACTIVE) { Serial.print('s'); }
-    if (keysStatuses.a1 == ACTIVE && keysStatuses.a2 == INACTIVE && keysStatuses.a3 == ACTIVE && keysStatuses.a4 == INACTIVE) { Serial.print('r'); }
-    if (keysStatuses.a1 == INACTIVE && keysStatuses.a2 == ACTIVE && keysStatuses.a3 == INACTIVE && keysStatuses.a4 == ACTIVE) { Serial.print('h'); }
-    if (keysStatuses.a1 == ACTIVE && keysStatuses.a2 == ACTIVE && keysStatuses.a3 == ACTIVE && keysStatuses.a4 == INACTIVE) { Serial.print('d'); }
-    if (keysStatuses.a1 == ACTIVE && keysStatuses.a2 == ACTIVE && keysStatuses.a3 == INACTIVE && keysStatuses.a4 == ACTIVE) { Serial.print('l'); }
-    if (keysStatuses.a1 == ACTIVE && keysStatuses.a2 == INACTIVE && keysStatuses.a3 == ACTIVE && keysStatuses.a4 == ACTIVE) { Serial.print('u'); }
-    if (keysStatuses.a1 == INACTIVE && keysStatuses.a2 == ACTIVE && keysStatuses.a3 == ACTIVE && keysStatuses.a4 == ACTIVE) { Serial.print('c'); }
-    if (keysStatuses.a1 == ACTIVE && keysStatuses.a2 == ACTIVE && keysStatuses.a3 == ACTIVE && keysStatuses.a4 == ACTIVE) { Serial.print('m'); } 
+    if (keysStatuses.a1 == ACTIVE && keysStatuses.a2 == INACTIVE && keysStatuses.a3 == INACTIVE && keysStatuses.a4 == INACTIVE) { BLE.press_key(HID_KEYBOARD_E); }
+    if (keysStatuses.a1 == INACTIVE && keysStatuses.a2 == ACTIVE && keysStatuses.a3 == INACTIVE && keysStatuses.a4 == INACTIVE) { BLE.press_key(HID_KEYBOARD_T); }
+    if (keysStatuses.a1 == INACTIVE && keysStatuses.a2 == INACTIVE && keysStatuses.a3 == ACTIVE && keysStatuses.a4 == INACTIVE) { BLE.press_key(HID_KEYBOARD_A); }
+    if (keysStatuses.a1 == INACTIVE && keysStatuses.a2 == INACTIVE && keysStatuses.a3 == INACTIVE && keysStatuses.a4 == ACTIVE) { BLE.press_key(HID_KEYBOARD_O); }
+    if (keysStatuses.a1 == ACTIVE && keysStatuses.a2 == ACTIVE && keysStatuses.a3 == INACTIVE && keysStatuses.a4 == INACTIVE) { BLE.press_key(HID_KEYBOARD_I); }
+    if (keysStatuses.a1 == INACTIVE && keysStatuses.a2 == ACTIVE && keysStatuses.a3 == ACTIVE && keysStatuses.a4 == INACTIVE) { BLE.press_key(HID_KEYBOARD_N); }
+    if (keysStatuses.a1 == INACTIVE && keysStatuses.a2 == INACTIVE && keysStatuses.a3 == ACTIVE && keysStatuses.a4 == ACTIVE) { BLE.press_key(HID_KEYBOARD_S); }
+    if (keysStatuses.a1 == ACTIVE && keysStatuses.a2 == INACTIVE && keysStatuses.a3 == ACTIVE && keysStatuses.a4 == INACTIVE) { BLE.press_key(HID_KEYBOARD_R); }
+    if (keysStatuses.a1 == INACTIVE && keysStatuses.a2 == ACTIVE && keysStatuses.a3 == INACTIVE && keysStatuses.a4 == ACTIVE) { BLE.press_key(HID_KEYBOARD_H); }
+    if (keysStatuses.a1 == ACTIVE && keysStatuses.a2 == ACTIVE && keysStatuses.a3 == ACTIVE && keysStatuses.a4 == INACTIVE) { BLE.press_key(HID_KEYBOARD_D); }
+    if (keysStatuses.a1 == ACTIVE && keysStatuses.a2 == ACTIVE && keysStatuses.a3 == INACTIVE && keysStatuses.a4 == ACTIVE) { BLE.press_key(HID_KEYBOARD_L); }
+    if (keysStatuses.a1 == ACTIVE && keysStatuses.a2 == INACTIVE && keysStatuses.a3 == ACTIVE && keysStatuses.a4 == ACTIVE) { BLE.press_key(HID_KEYBOARD_U); }
+    if (keysStatuses.a1 == INACTIVE && keysStatuses.a2 == ACTIVE && keysStatuses.a3 == ACTIVE && keysStatuses.a4 == ACTIVE) { BLE.press_key(HID_KEYBOARD_C); }
+    if (keysStatuses.a1 == ACTIVE && keysStatuses.a2 == ACTIVE && keysStatuses.a3 == ACTIVE && keysStatuses.a4 == ACTIVE) { BLE.press_key(HID_KEYBOARD_M); }
+
+    if (keysStatuses.h1 == ACTIVE && keysStatuses.h2 === INACTIVE) { BLE.press_key(HID_KEYBOARD_SPACEBAR); }
+    if (keysStatuses.h1 == INACTIVE && keysStatuses.h2 == ACTIVE) { BLE.press_key(HID_KEYBOARD_DELETE); } // Backspace
   } else if (keysStatuses.f == ACTIVE) {
-    if (keysStatuses.a1 == ACTIVE && keysStatuses.a2 == INACTIVE && keysStatuses.a3 == INACTIVE && keysStatuses.a4 == INACTIVE) { Serial.print('f'); } 
-    if (keysStatuses.a1 == INACTIVE && keysStatuses.a2 == ACTIVE && keysStatuses.a3 == INACTIVE && keysStatuses.a4 == INACTIVE) { Serial.print('y'); } 
-    if (keysStatuses.a1 == INACTIVE && keysStatuses.a2 == INACTIVE && keysStatuses.a3 == ACTIVE && keysStatuses.a4 == INACTIVE) { Serial.print('w'); } 
-    if (keysStatuses.a1 == INACTIVE && keysStatuses.a2 == INACTIVE && keysStatuses.a3 == INACTIVE && keysStatuses.a4 == ACTIVE) { Serial.print('g'); } 
-    if (keysStatuses.a1 == ACTIVE && keysStatuses.a2 == ACTIVE && keysStatuses.a3 == INACTIVE && keysStatuses.a4 == INACTIVE) { Serial.print('p'); }
-    if (keysStatuses.a1 == INACTIVE && keysStatuses.a2 == ACTIVE && keysStatuses.a3 == ACTIVE && keysStatuses.a4 == INACTIVE) { Serial.print('b'); }
-    if (keysStatuses.a1 == INACTIVE && keysStatuses.a2 == INACTIVE && keysStatuses.a3 == ACTIVE && keysStatuses.a4 == ACTIVE) { Serial.print('v'); }
-    if (keysStatuses.a1 == ACTIVE && keysStatuses.a2 == INACTIVE && keysStatuses.a3 == ACTIVE && keysStatuses.a4 == INACTIVE) { Serial.print('k'); }
-    if (keysStatuses.a1 == INACTIVE && keysStatuses.a2 == ACTIVE && keysStatuses.a3 == INACTIVE && keysStatuses.a4 == ACTIVE) { Serial.print('x'); }
-    if (keysStatuses.a1 == ACTIVE && keysStatuses.a2 == ACTIVE && keysStatuses.a3 == ACTIVE && keysStatuses.a4 == INACTIVE) { Serial.print('q'); }
-    if (keysStatuses.a1 == ACTIVE && keysStatuses.a2 == ACTIVE && keysStatuses.a3 == INACTIVE && keysStatuses.a4 == ACTIVE) { Serial.print('z'); }
-    if (keysStatuses.a1 == ACTIVE && keysStatuses.a2 == INACTIVE && keysStatuses.a3 == ACTIVE && keysStatuses.a4 == ACTIVE) { Serial.print('j'); }
+    if (keysStatuses.a1 == ACTIVE && keysStatuses.a2 == INACTIVE && keysStatuses.a3 == INACTIVE && keysStatuses.a4 == INACTIVE) { BLE.press_key(HID_KEYBOARD_F); } 
+    if (keysStatuses.a1 == INACTIVE && keysStatuses.a2 == ACTIVE && keysStatuses.a3 == INACTIVE && keysStatuses.a4 == INACTIVE) { BLE.press_key(HID_KEYBOARD_Y); } 
+    if (keysStatuses.a1 == INACTIVE && keysStatuses.a2 == INACTIVE && keysStatuses.a3 == ACTIVE && keysStatuses.a4 == INACTIVE) { BLE.press_key(HID_KEYBOARD_W); } 
+    if (keysStatuses.a1 == INACTIVE && keysStatuses.a2 == INACTIVE && keysStatuses.a3 == INACTIVE && keysStatuses.a4 == ACTIVE) { BLE.press_key(HID_KEYBOARD_G); } 
+    if (keysStatuses.a1 == ACTIVE && keysStatuses.a2 == ACTIVE && keysStatuses.a3 == INACTIVE && keysStatuses.a4 == INACTIVE) { BLE.press_key(HID_KEYBOARD_P); }
+    if (keysStatuses.a1 == INACTIVE && keysStatuses.a2 == ACTIVE && keysStatuses.a3 == ACTIVE && keysStatuses.a4 == INACTIVE) { BLE.press_key(HID_KEYBOARD_B); }
+    if (keysStatuses.a1 == INACTIVE && keysStatuses.a2 == INACTIVE && keysStatuses.a3 == ACTIVE && keysStatuses.a4 == ACTIVE) { BLE.press_key(HID_KEYBOARD_V); }
+    if (keysStatuses.a1 == ACTIVE && keysStatuses.a2 == INACTIVE && keysStatuses.a3 == ACTIVE && keysStatuses.a4 == INACTIVE) { BLE.press_key(HID_KEYBOARD_K); }
+    if (keysStatuses.a1 == INACTIVE && keysStatuses.a2 == ACTIVE && keysStatuses.a3 == INACTIVE && keysStatuses.a4 == ACTIVE) { BLE.press_key(HID_KEYBOARD_X); }
+    if (keysStatuses.a1 == ACTIVE && keysStatuses.a2 == ACTIVE && keysStatuses.a3 == ACTIVE && keysStatuses.a4 == INACTIVE) { BLE.press_key(HID_KEYBOARD_Q); }
+    if (keysStatuses.a1 == ACTIVE && keysStatuses.a2 == ACTIVE && keysStatuses.a3 == INACTIVE && keysStatuses.a4 == ACTIVE) { BLE.press_key(HID_KEYBOARD_Z); }
+    if (keysStatuses.a1 == ACTIVE && keysStatuses.a2 == INACTIVE && keysStatuses.a3 == ACTIVE && keysStatuses.a4 == ACTIVE) { BLE.press_key(HID_KEYBOARD_J); }
   }
-   delay(200);
+  delay(10);
 }
